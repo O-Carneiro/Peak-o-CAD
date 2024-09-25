@@ -1,0 +1,24 @@
+# Ignore executables (common patterns for Unix and Windows)
+*.exe
+*.out
+*.o
+*.dll
+*.so
+
+# Ignore macOS system files
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Thumbnails
+._*
+
+# Ignore other system files
+Thumbs.db
+Desktop.ini
+
+# Logs and temporary files
+*.log
+*.tmp
+*.bak
+*.swp
