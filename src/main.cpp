@@ -1,3 +1,4 @@
+#include <bits/stdc++.h>
 #include <SFML/Window.hpp>
 #include <SFML/OpenGL.hpp>
 #include <cmath>
