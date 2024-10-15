@@ -19,10 +19,10 @@ GLfloat vertices[] = {
 
 GLfloat colors[] = {
     // Front face (red)
-    1.0f, 0.0f, 0.0f,
-    1.0f, 0.0f, 0.0f,
-    1.0f, 0.0f, 0.0f,
-    1.0f, 0.0f, 0.0f,
+    0.0f, 0.0f, 1.0f,
+    0.0f, 0.0f, 1.0f,
+    0.0f, 0.0f, 1.0f,
+    0.0f, 0.0f, 1.0f,
 
     // Back face (green)
     0.0f, 1.0f, 0.0f,

@@ -14,6 +14,12 @@ Then, we build it normally, run it with `--net=host` so it able to access the X 
 set the `DISPLAY` enviroment variable, and expose the `/dev/dri` devices to the container
 granting it access to the GPU.
 
+### System dependencies
+
+`x11-xserver-utils` is needed to run the `xhost` command.
+
+
+
 ### Building and running the project
 Run this once in the session, before running the program.
 ```
