@@ -2,6 +2,7 @@
 #include <SFML/Window.hpp>
 #include <SFML/OpenGL.hpp>
 #include <cmath>
+#include "camera.h"
 
 // Cube vertices and color data
 GLfloat vertices[] = {
@@ -58,21 +59,12 @@ GLubyte indices[] = {
     5, 1, 0
 };
 
-void setFrustum(float fov, float aspect, float near, float far)
-{
-    float top = near * tan(fov / 2.0f);
-    float bottom = -top;
-    float right = top * aspect;
-    float left = -right;
-
-    // Set the projection matrix using glFrustum
-    glFrustum(left, right, bottom, top, near, far);
-}
 
 int main()
 {
     // Create the window
     sf::Window window(sf::VideoMode(800, 600), "OpenGL Spinning Cube", sf::Style::Default, sf::ContextSettings(32));
+    Camera camera;
     window.setVerticalSyncEnabled(true);
 
     // Activate the window
@@ -93,11 +85,12 @@ int main()
     float aspect = (float)800 / (float)600;    // Aspect ratio
     float near = 0.1f;
     float far = 100.0f;
-    setFrustum(fov, aspect, near, far);  // Replace gluPerspective
+    camera.setFrustum(fov, aspect, near, far);  // Replace gluPerspective
 
     // Run the main loop
     bool running = true;
-    float angle = 0.0f;  // Rotation angle
+    float rotation_angle_h = 0;
+    float rotation_angle_v = 0;
 
     while (running)
     {
@@ -116,9 +109,10 @@ int main()
                 glMatrixMode(GL_PROJECTION);
                 glLoadIdentity();
                 float aspect = (float)event.size.width / (float)event.size.height;
-                setFrustum(fov, aspect, near, far);  // Update frustum for the new aspect ratio
+                camera.setFrustum(fov, aspect, near, far);  // Update frustum for the new aspect ratio
             }
         }
+        camera.handleInput(rotation_angle_h, rotation_angle_v);
 
         // Clear the color and depth buffer
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -126,8 +120,8 @@ int main()
         // Set model-view matrix
         glMatrixMode(GL_MODELVIEW);
         glLoadIdentity();
-        glTranslatef(0.0f, 0.0f, -1.5f);  // Move cube away from the camera
-        glRotatef(angle, 1.0f, 1.0f, 0.0f);  // Rotate cube along x and y axes
+        camera.setDistance(1.5f);
+        camera.setRotation(rotation_angle_h, rotation_angle_v);
 
         // Enable vertex and color arrays
         glEnableClientState(GL_VERTEX_ARRAY);
@@ -145,10 +139,7 @@ int main()
         glDisableClientState(GL_COLOR_ARRAY);
 
         // End the current frame (internally swaps the front and back buffers)
-        window.display();
-
-        // Increment the rotation angle
-        angle += 0.5f;
+        window.display();   
     }
 
     return 0;
