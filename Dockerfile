@@ -47,6 +47,7 @@ RUN git clone --branch 2.6.x --depth 1 https://github.com/SFML/SFML.git /app/SFM
 # Copy the source code into the container
 COPY CMakeLists.txt .
 COPY src src
+COPY assets assets
 
 # Create a build directory and configure CMake (but do not rebuild SFML)
 RUN mkdir -p /app/build
