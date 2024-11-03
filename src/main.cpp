@@ -3,6 +3,7 @@
 #include <SFML/OpenGL.hpp>
 #include <cmath>
 #include "camera.h"
+#include "solid_selector.h"
 
 // Cube vertices and color data
 GLfloat vertices[] = {
@@ -62,13 +63,14 @@ GLubyte indices[] = {
 
 int main()
 {
-    // Create the window
-    sf::Window window(sf::VideoMode(800, 600), "OpenGL Spinning Cube", sf::Style::Default, sf::ContextSettings(32));
+// Create the window using sf::RenderWindow to support drawing
+    sf::RenderWindow window(sf::VideoMode(800, 600), "OpenGL Spinning Cube", sf::Style::Default, sf::ContextSettings(32));
     Camera camera;
     window.setVerticalSyncEnabled(true);
 
-    // Activate the window
-    window.setActive(true);
+    // Create solid selector dropdown menu
+    std::vector<std::string> items = { "Cube", "Pyramid", "Sphere" };
+    SolidSelector solid_selector(10, 10, 150, 30, items);
 
     // Enable depth test
     glEnable(GL_DEPTH_TEST);
@@ -78,11 +80,11 @@ int main()
     glEnable(GL_CULL_FACE);
     glCullFace(GL_BACK);
 
-    // Set up perspective projection matrix using glFrustum
+    // Set up perspective projection matrix
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
     float fov = 90.0f * 3.14159265f / 180.0f;  // Field of view in radians
-    float aspect = (float)800 / (float)600;    // Aspect ratio
+    float aspect = static_cast<float>(800) / 600; // Aspect ratio
     float near = 0.1f;
     float far = 100.0f;
     camera.setFrustum(fov, aspect, near, far);  // Replace gluPerspective
@@ -92,26 +94,24 @@ int main()
     float rotation_angle_h = 0;
     float rotation_angle_v = 0;
 
-    while (running)
-    {
+    while (running) {
         // Handle events
         sf::Event event;
-        while (window.pollEvent(event))
-        {
-            if (event.type == sf::Event::Closed)
-            {
+        while (window.pollEvent(event)) {
+            if (event.type == sf::Event::Closed) {
                 running = false;
-            }
-            else if (event.type == sf::Event::Resized)
-            {
+            } else if (event.type == sf::Event::Resized) {
                 // Adjust the viewport when the window is resized
                 glViewport(0, 0, event.size.width, event.size.height);
                 glMatrixMode(GL_PROJECTION);
                 glLoadIdentity();
-                float aspect = (float)event.size.width / (float)event.size.height;
+                float aspect = static_cast<float>(event.size.width) / event.size.height;
                 camera.setFrustum(fov, aspect, near, far);  // Update frustum for the new aspect ratio
             }
+            solid_selector.handleEvent(event, window);
         }
+
+        // Handle camera input
         camera.handleInput(rotation_angle_h, rotation_angle_v);
 
         // Clear the color and depth buffer
@@ -127,7 +127,7 @@ int main()
         glEnableClientState(GL_VERTEX_ARRAY);
         glEnableClientState(GL_COLOR_ARRAY);
 
-        // Set vertex and color pointers
+        // Set vertex and color pointers (assuming vertices, colors, indices are defined elsewhere)
         glVertexPointer(3, GL_FLOAT, 0, vertices);
         glColorPointer(3, GL_FLOAT, 0, colors);
 
@@ -138,10 +138,14 @@ int main()
         glDisableClientState(GL_VERTEX_ARRAY);
         glDisableClientState(GL_COLOR_ARRAY);
 
-        // End the current frame (internally swaps the front and back buffers)
-        window.display();   
+        // Draw the dropdown menu on top of OpenGL content
+        window.pushGLStates();          // Save the OpenGL state
+        solid_selector.draw(window);     // Draw the SFML dropdown
+        window.popGLStates();            // Restore the OpenGL state
+
+        // End the current frame
+        window.display();
     }
 
     return 0;
 }
-
