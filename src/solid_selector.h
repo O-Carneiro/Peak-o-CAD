@@ -58,7 +58,7 @@ public:
           if (options[i].first.getGlobalBounds().contains(mousePos2f)) {
             selectedIndex = i;
             selectedText.setString(options[i].second.getString());
-            std::cout << selectedText.getString().toAnsiString() << std::endl;
+            // std::cout << selectedText.getString().toAnsiString() << std::endl;
             isOpen = false;
             break;
           }
@@ -79,6 +79,10 @@ public:
     }
   }
 
+        sf::Text getSelectedText() {
+           return selectedText;
+        }
+
 private:
   sf::RectangleShape button;
   sf::Text selectedText;
@@ -87,33 +91,3 @@ private:
   bool isOpen;
   sf::Font font; // Load your font in the constructor
 };
-
-// int main() {
-//     sf::RenderWindow window(sf::VideoMode(800, 600),
-//                             "SFML SolidSelector Example");
-
-//     // Load font (adjust path as needed)
-//     sf::Font font;
-//     if (!font.loadFromFile("path/to/your/font.ttf")) {
-//         return -1; // Handle error
-//     }
-
-//     std::vector<std::string> items = {"Option 1", "Option 2", "Option 3"};
-//     SolidSelector dropdown(100, 50, 150, 30, items);
-
-//     while (window.isOpen()) {
-//         sf::Event event;
-//         while (window.pollEvent(event)) {
-//             if (event.type == sf::Event::Closed)
-//                 window.close();
-
-//             dropdown.handleEvent(event, window);
-//         }
-
-//         window.clear();
-//         dropdown.draw(window);
-//         window.display();
-//     }
-
-//     return 0;
-// }
