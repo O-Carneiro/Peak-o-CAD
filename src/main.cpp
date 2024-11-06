@@ -21,7 +21,7 @@ GLfloat vertices[] = {
 
 GLfloat colors[] = {
     // Front face (red)
-    0.0f, 0.0f, 1.0f,
+    0.0f, 1.0f, 1.0f,
     0.0f, 0.0f, 1.0f,
     0.0f, 0.0f, 1.0f,
     0.0f, 0.0f, 1.0f,
@@ -62,8 +62,9 @@ GLubyte indices[] = {
 
 int main()
 {
+    int window_width = 800, window_height = 600;
     // Create the window
-    sf::Window window(sf::VideoMode(800, 600), "OpenGL Spinning Cube", sf::Style::Default, sf::ContextSettings(32));
+    sf::Window window(sf::VideoMode(window_width, window_height), "OpenGL Spinning Cube", sf::Style::Default, sf::ContextSettings(32));
     Camera camera;
     window.setVerticalSyncEnabled(true);
 
@@ -82,7 +83,7 @@ int main()
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
     float fov = 90.0f * 3.14159265f / 180.0f;  // Field of view in radians
-    float aspect = (float)800 / (float)600;    // Aspect ratio
+    float aspect = (float)window_width / (float)window_height;    // Aspect ratio
     float near = 0.1f;
     float far = 100.0f;
     camera.setFrustum(fov, aspect, near, far);  // Replace gluPerspective
@@ -105,7 +106,9 @@ int main()
             else if (event.type == sf::Event::Resized)
             {
                 // Adjust the viewport when the window is resized
-                glViewport(0, 0, event.size.width, event.size.height);
+                //glViewport(0, 0, event.size.width, event.size.height);
+                window_width = event.size.width;
+                window_height = event.size.height;
                 glMatrixMode(GL_PROJECTION);
                 glLoadIdentity();
                 float aspect = (float)event.size.width / (float)event.size.height;
@@ -132,8 +135,31 @@ int main()
         glColorPointer(3, GL_FLOAT, 0, colors);
 
         // Draw the cube using index array
+
+        // - Top-right (free camera)
+        glViewport(window_width/2, window_height/2, window_width/2, window_height/2);
         glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_BYTE, indices);
 
+        // - Bottom-right (front view)
+        glViewport(window_width/2, 0, window_width/2, window_height/2);
+        glLoadIdentity();
+        glTranslatef(0.0f, 0.0f, -1.5f);
+        glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_BYTE, indices);
+
+        // - Top-left (up view)
+        glViewport(0, window_height/2, window_width/2, window_height/2);
+        glLoadIdentity();
+        glTranslatef(0.0f, 0.0f, -1.5f);
+        glRotatef(90, 1.0f, 0.0f, 0.0f);
+        glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_BYTE, indices);
+
+        // - Bottom-left (side view)
+        glViewport(0, 0, window_width/2, window_height/2);
+        glLoadIdentity();
+        glTranslatef(0.0f, 0.0f, -1.5f);
+        glRotatef(90, 0.0f, 1.0f, 0.0f);
+        glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_BYTE, indices);
+        
         // Disable vertex and color arrays
         glDisableClientState(GL_VERTEX_ARRAY);
         glDisableClientState(GL_COLOR_ARRAY);
