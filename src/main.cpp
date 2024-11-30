@@ -3,9 +3,12 @@
 #include <SFML/OpenGL.hpp>
 #include <cmath>
 #include "camera.h"
+#include "solid_selector.h"
+
+#define MAX_VERTICES 100000
 
 // Cube vertices and color data
-GLfloat vertices[] = {
+GLfloat cubeVertices[] = {
     // Front face
     -0.5f, -0.5f,  0.5f,  // Bottom-left
      0.5f, -0.5f,  0.5f,  // Bottom-right
@@ -19,7 +22,7 @@ GLfloat vertices[] = {
     -0.5f,  0.5f, -0.5f   // Top-left
 };
 
-GLfloat colors[] = {
+GLfloat cubeColors[] = {
     // Front face (red)
     0.0f, 0.0f, 1.0f,
     0.0f, 0.0f, 1.0f,
@@ -33,7 +36,7 @@ GLfloat colors[] = {
     0.0f, 1.0f, 0.0f
 };
 
-GLubyte indices[] = {
+GLubyte cubeIndices[] = {
     // Front face (counterclockwise)
     0, 1, 2,
     2, 3, 0,
@@ -60,15 +63,63 @@ GLubyte indices[] = {
 };
 
 
+// Pyramid vertices and color data
+GLfloat pyramidVertices[] = {
+    // Apex (top point of the pyramid)
+    0.0f, 0.5f, 0.0f,   // Vertex 0 (Apex)
+
+    // Base vertices
+    -0.5f, -0.5f, -0.5f, // Vertex 1 (Base - left)
+     0.5f, -0.5f, -0.5f, // Vertex 2 (Base - right)
+     0.0f, -0.5f,  0.5f  // Vertex 3 (Base - front)
+};
+
+// Define colors for each vertex (can be customized for each face)
+GLfloat pyramidColors[] = {
+    // Apex color (e.g., red)
+    1.0f, 0.0f, 0.0f,  // Apex
+
+    // Base vertices (e.g., green)
+    0.0f, 1.0f, 0.0f,  // Base - left
+    0.0f, 1.0f, 0.0f,  // Base - right
+    0.0f, 1.0f, 0.0f   // Base - front
+};
+
+// Define indices for each face of the pyramid
+GLubyte pyramidIndices[] = {
+    // Side faces
+    0, 1, 2,  // Apex, Base-left, Base-right
+    0, 2, 3,  // Apex, Base-right, Base-front
+    0, 3, 1,  // Apex, Base-front, Base-left
+
+    // Base face
+    1, 3, 2   // Base-left, Base-front, Base-right (counterclockwise for back face culling)
+};
+
+void drawSolid(GLfloat vertices[], GLfloat colors[], GLubyte indices[], GLsizei indexCount) {
+  // Set vertex and color pointers
+  glVertexPointer(3, GL_FLOAT, 0, vertices);
+  glColorPointer(3, GL_FLOAT, 0, colors);
+
+  // Draw the cube using index array
+  glDrawElements(GL_TRIANGLES, indexCount, GL_UNSIGNED_BYTE, indices);
+
+  // Disable vertex and color arrays
+  glDisableClientState(GL_VERTEX_ARRAY);
+  glDisableClientState(GL_COLOR_ARRAY);
+}
+
 int main()
 {
-    // Create the window
-    sf::Window window(sf::VideoMode(800, 600), "OpenGL Spinning Cube", sf::Style::Default, sf::ContextSettings(32));
+// Create the window using sf::RenderWindow to support drawing
+    sf::RenderWindow window(sf::VideoMode(800, 600), "OpenGL Spinning Cube", sf::Style::Default, sf::ContextSettings(32));
     Camera camera;
     window.setVerticalSyncEnabled(true);
 
-    // Activate the window
-    window.setActive(true);
+    // Create solid selector dropdown menu
+    std::vector<std::string> items = { "Cube", "Pyramid"};
+    SolidSelector solidSelector(10, 10, 150, 30, items);
+    std::string selectedSolid = "";
 
     // Enable depth test
     glEnable(GL_DEPTH_TEST);
@@ -78,11 +129,11 @@ int main()
     glEnable(GL_CULL_FACE);
     glCullFace(GL_BACK);
 
-    // Set up perspective projection matrix using glFrustum
+    // Set up perspective projection matrix
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
     float fov = 90.0f * 3.14159265f / 180.0f;  // Field of view in radians
-    float aspect = (float)800 / (float)600;    // Aspect ratio
+    float aspect = static_cast<float>(800) / 600; // Aspect ratio
     float near = 0.1f;
     float far = 100.0f;
     camera.setFrustum(fov, aspect, near, far);  // Replace gluPerspective
@@ -92,26 +143,24 @@ int main()
     float rotation_angle_h = 0;
     float rotation_angle_v = 0;
 
-    while (running)
-    {
+    while (running) {
         // Handle events
         sf::Event event;
-        while (window.pollEvent(event))
-        {
-            if (event.type == sf::Event::Closed)
-            {
+        while (window.pollEvent(event)) {
+            if (event.type == sf::Event::Closed) {
                 running = false;
-            }
-            else if (event.type == sf::Event::Resized)
-            {
+            } else if (event.type == sf::Event::Resized) {
                 // Adjust the viewport when the window is resized
                 glViewport(0, 0, event.size.width, event.size.height);
                 glMatrixMode(GL_PROJECTION);
                 glLoadIdentity();
-                float aspect = (float)event.size.width / (float)event.size.height;
+                float aspect = static_cast<float>(event.size.width) / event.size.height;
                 camera.setFrustum(fov, aspect, near, far);  // Update frustum for the new aspect ratio
             }
+            solidSelector.handleEvent(event, window);
         }
+
+        // Handle camera input
         camera.handleInput(rotation_angle_h, rotation_angle_v);
 
         // Clear the color and depth buffer
@@ -127,21 +176,22 @@ int main()
         glEnableClientState(GL_VERTEX_ARRAY);
         glEnableClientState(GL_COLOR_ARRAY);
 
-        // Set vertex and color pointers
-        glVertexPointer(3, GL_FLOAT, 0, vertices);
-        glColorPointer(3, GL_FLOAT, 0, colors);
+        selectedSolid = solidSelector.getSelectedText().getString().toAnsiString();
+        if (selectedSolid == "Cube") {
+            drawSolid(cubeVertices, cubeColors, cubeIndices, 36);
+        }
+        else if (selectedSolid == "Pyramid") {
+            drawSolid(pyramidVertices, pyramidColors, pyramidIndices, 18);
+        }
 
-        // Draw the cube using index array
-        glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_BYTE, indices);
+        // Draw the dropdown menu on top of OpenGL content
+        window.pushGLStates();          // Save the OpenGL state
+        solidSelector.draw(window);     // Draw the SFML dropdown
+        window.popGLStates();            // Restore the OpenGL state
 
-        // Disable vertex and color arrays
-        glDisableClientState(GL_VERTEX_ARRAY);
-        glDisableClientState(GL_COLOR_ARRAY);
-
-        // End the current frame (internally swaps the front and back buffers)
-        window.display();   
+        // End the current frame
+        window.display();
     }
 
     return 0;
 }
-
