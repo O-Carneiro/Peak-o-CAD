@@ -24,7 +24,7 @@ GLfloat cubeVertices[] = {
 
 GLfloat cubeColors[] = {
     // Front face (red)
-    0.0f, 0.0f, 1.0f,
+    0.0f, 1.0f, 1.0f,
     0.0f, 0.0f, 1.0f,
     0.0f, 0.0f, 1.0f,
     0.0f, 0.0f, 1.0f,
@@ -103,16 +103,19 @@ void drawSolid(GLfloat vertices[], GLfloat colors[], GLubyte indices[], GLsizei 
 
   // Draw the cube using index array
   glDrawElements(GL_TRIANGLES, indexCount, GL_UNSIGNED_BYTE, indices);
+}
 
-  // Disable vertex and color arrays
-  glDisableClientState(GL_VERTEX_ARRAY);
-  glDisableClientState(GL_COLOR_ARRAY);
+void drawOption(std::string solid)
+{
+    if(solid == "Cube") drawSolid(cubeVertices, cubeColors, cubeIndices, 36);
+    else if(solid == "Pyramid") drawSolid(pyramidVertices, pyramidColors, pyramidIndices, 18);
 }
 
 int main()
 {
+    int window_width = 800, window_height = 600;
 // Create the window using sf::RenderWindow to support drawing
-    sf::RenderWindow window(sf::VideoMode(800, 600), "OpenGL Spinning Cube", sf::Style::Default, sf::ContextSettings(32));
+    sf::RenderWindow window(sf::VideoMode(window_width, window_height), "OpenGL Spinning Cube", sf::Style::Default, sf::ContextSettings(32));
     Camera camera;
     window.setVerticalSyncEnabled(true);
 
@@ -151,7 +154,9 @@ int main()
                 running = false;
             } else if (event.type == sf::Event::Resized) {
                 // Adjust the viewport when the window is resized
-                glViewport(0, 0, event.size.width, event.size.height);
+                //glViewport(0, 0, event.size.width, event.size.height);
+                window_width = event.size.width;
+                window_height = event.size.height;
                 glMatrixMode(GL_PROJECTION);
                 glLoadIdentity();
                 float aspect = static_cast<float>(event.size.width) / event.size.height;
@@ -177,12 +182,35 @@ int main()
         glEnableClientState(GL_COLOR_ARRAY);
 
         selectedSolid = solidSelector.getSelectedText().getString().toAnsiString();
-        if (selectedSolid == "Cube") {
-            drawSolid(cubeVertices, cubeColors, cubeIndices, 36);
-        }
-        else if (selectedSolid == "Pyramid") {
-            drawSolid(pyramidVertices, pyramidColors, pyramidIndices, 18);
-        }
+        // Draw the solid using index array
+
+        // - Top-right (free camera)
+        glViewport(window_width/2, window_height/2, window_width/2, window_height/2);
+        drawOption(selectedSolid);
+
+        // - Bottom-right (front view)
+        glViewport(window_width/2, 0, window_width/2, window_height/2);
+        glLoadIdentity();
+        glTranslatef(0.0f, 0.0f, -1.5f);
+        drawOption(selectedSolid);
+
+        // - Top-left (up view)
+        glViewport(0, window_height/2, window_width/2, window_height/2);
+        glLoadIdentity();
+        glTranslatef(0.0f, 0.0f, -1.5f);
+        glRotatef(90, 1.0f, 0.0f, 0.0f);
+        drawOption(selectedSolid);
+
+        // - Bottom-left (side view)
+        glViewport(0, 0, window_width/2, window_height/2);
+        glLoadIdentity();
+        glTranslatef(0.0f, 0.0f, -1.5f);
+        glRotatef(90, 0.0f, 1.0f, 0.0f);
+        drawOption(selectedSolid);
+        
+        // Disable vertex and color arrays
+        glDisableClientState(GL_VERTEX_ARRAY);
+        glDisableClientState(GL_COLOR_ARRAY);
 
         // Draw the dropdown menu on top of OpenGL content
         window.pushGLStates();          // Save the OpenGL state
