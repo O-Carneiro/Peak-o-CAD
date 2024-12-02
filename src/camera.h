@@ -5,8 +5,12 @@
 class Camera
 {
     public:
-    
-    void handleInput(float &rotation_angle_h, float &rotation_angle_v) {
+    float rotation_angle_h = 0;
+    float rotation_angle_v = 0;
+    double zoom_distance = 2;
+
+
+    void handleInput() {
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left)){
             rotation_angle_h --;
         }
@@ -20,6 +24,15 @@ class Camera
             rotation_angle_v --;
         }
         rotation_angle_v = std::clamp(rotation_angle_v, -90.0f, 90.0f);
+    }
+
+    
+    void handleEvent(const sf::Event &event, const sf::Window &window){
+        if(event.type == sf::Event::MouseWheelMoved) {
+                // Zoom in/out
+                zoom_distance += -event.mouseWheel.delta*0.1;
+                zoom_distance = std::clamp(zoom_distance, 1.5, 5.0);
+            }
     }
 
 
