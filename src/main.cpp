@@ -173,8 +173,6 @@ int main()
         // Set model-view matrix
         glMatrixMode(GL_MODELVIEW);
         glLoadIdentity();
-        camera.setDistance(camera.zoom_distance);
-        camera.setRotation(camera.rotation_angle_h, camera.rotation_angle_v);
 
         // Enable vertex and color arrays
         glEnableClientState(GL_VERTEX_ARRAY);
@@ -185,17 +183,21 @@ int main()
 
         // - Top-right (free camera)
         glViewport(window_width/2, window_height/2, window_width/2, window_height/2);
+        camera.setDistance(camera.zoom_distance_viewport);
+        camera.setRotation(camera.rotation_angle_h, camera.rotation_angle_v);
         drawOption(selectedSolid);
 
         // - Bottom-right (front view)
         glViewport(window_width/2, 0, window_width/2, window_height/2);
         glLoadIdentity();
+        camera.setDistance(camera.zoom_distance_front);
         glTranslatef(0.0f, 0.0f, -1.5f);
         drawOption(selectedSolid);
 
         // - Top-left (up view)
         glViewport(0, window_height/2, window_width/2, window_height/2);
         glLoadIdentity();
+        camera.setDistance(camera.zoom_distance_up);
         glTranslatef(0.0f, 0.0f, -1.5f);
         glRotatef(90, 1.0f, 0.0f, 0.0f);
         drawOption(selectedSolid);
@@ -203,6 +205,7 @@ int main()
         // - Bottom-left (side view)
         glViewport(0, 0, window_width/2, window_height/2);
         glLoadIdentity();
+        camera.setDistance(camera.zoom_distance_side);
         glTranslatef(0.0f, 0.0f, -1.5f);
         glRotatef(90, 0.0f, 1.0f, 0.0f);
         drawOption(selectedSolid);
