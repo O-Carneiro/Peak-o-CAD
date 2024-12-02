@@ -4,6 +4,7 @@
 #include <cmath>
 #include "camera.h"
 #include "solid_selector.h"
+#include "solids.h"
 
 #define MAX_VERTICES 100000
 
@@ -113,8 +114,9 @@ void drawOption(std::string solid)
 
 int main()
 {
+ 
     int window_width = 800, window_height = 600;
-// Create the window using sf::RenderWindow to support drawing
+    // Create the window using sf::RenderWindow to support drawing
     sf::RenderWindow window(sf::VideoMode(window_width, window_height), "OpenGL Spinning Cube", sf::Style::Default, sf::ContextSettings(32));
     Camera camera;
     window.setVerticalSyncEnabled(true);
@@ -154,7 +156,7 @@ int main()
                 running = false;
             } else if (event.type == sf::Event::Resized) {
                 // Adjust the viewport when the window is resized
-                //glViewport(0, 0, event.size.width, event.size.height);
+                glViewport(0, 0, event.size.width, event.size.height);
                 window_width = event.size.width;
                 window_height = event.size.height;
                 glMatrixMode(GL_PROJECTION);
