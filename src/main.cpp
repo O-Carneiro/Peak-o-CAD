@@ -1,116 +1,50 @@
+#include <GL/gl.h>
 #include <bits/stdc++.h>
 #include <SFML/Window.hpp>
 #include <SFML/OpenGL.hpp>
 #include <cmath>
+#include <vector>
 #include "camera.h"
 #include "solid_selector.h"
+#include "vertex.h"
+#include "solids.h"
 
 #define MAX_VERTICES 100000
 
-// Cube vertices and color data
-GLfloat cubeVertices[] = {
-    // Front face
-    -0.5f, -0.5f,  0.5f,  // Bottom-left
-     0.5f, -0.5f,  0.5f,  // Bottom-right
-     0.5f,  0.5f,  0.5f,  // Top-right
-    -0.5f,  0.5f,  0.5f,  // Top-left
-
-    // Back face
-    -0.5f, -0.5f, -0.5f,  // Bottom-left
-     0.5f, -0.5f, -0.5f,  // Bottom-right
-     0.5f,  0.5f, -0.5f,  // Top-right
-    -0.5f,  0.5f, -0.5f   // Top-left
-};
-
-GLfloat cubeColors[] = {
-    // Front face (red)
-    0.0f, 0.0f, 1.0f,
-    0.0f, 0.0f, 1.0f,
-    0.0f, 0.0f, 1.0f,
-    0.0f, 0.0f, 1.0f,
-
-    // Back face (green)
-    0.0f, 1.0f, 0.0f,
-    0.0f, 1.0f, 0.0f,
-    0.0f, 1.0f, 0.0f,
-    0.0f, 1.0f, 0.0f
-};
-
-GLubyte cubeIndices[] = {
-    // Front face (counterclockwise)
-    0, 1, 2,
-    2, 3, 0,
-    
-    // Back face (counterclockwise)
-    4, 7, 6,
-    6, 5, 4,
-
-    // Left face (counterclockwise)
-    0, 3, 7,
-    7, 4, 0,
-
-    // Right face (counterclockwise)
-    1, 5, 6,
-    6, 2, 1,
-
-    // Top face (counterclockwise)
-    3, 2, 6,
-    6, 7, 3,
-
-    // Bottom face (counterclockwise)
-    0, 4, 5,
-    5, 1, 0
-};
+VertexManager vertexManager;
 
 
-// Pyramid vertices and color data
-GLfloat pyramidVertices[] = {
-    // Apex (top point of the pyramid)
-    0.0f, 0.5f, 0.0f,   // Vertex 0 (Apex)
+void drawSolid(const std::vector<Graphics::Vertex> vertices, const std::vector<GLubyte>& indices) {
+    // enable vertex and color arrays
+    glEnableClientState(GL_VERTEX_ARRAY);
+    glEnableClientState(GL_COLOR_ARRAY);
 
-    // Base vertices
-    -0.5f, -0.5f, -0.5f, // Vertex 1 (Base - left)
-     0.5f, -0.5f, -0.5f, // Vertex 2 (Base - right)
-     0.0f, -0.5f,  0.5f  // Vertex 3 (Base - front)
-};
+    std::vector<GLfloat> positions;
+    std::vector<GLfloat> colors;
+    for (const auto& vertex : vertices) {
+        positions.push_back(vertex.x);
+        positions.push_back(vertex.y);
+        positions.push_back(vertex.z);
 
-// Define colors for each vertex (can be customized for each face)
-GLfloat pyramidColors[] = {
-    // Apex color (e.g., red)
-    1.0f, 0.0f, 0.0f,  // Apex
+        colors.push_back(vertex.r);
+        colors.push_back(vertex.g);
+        colors.push_back(vertex.b);
+    }
 
-    // Base vertices (e.g., green)
-    0.0f, 1.0f, 0.0f,  // Base - left
-    0.0f, 1.0f, 0.0f,  // Base - right
-    0.0f, 1.0f, 0.0f   // Base - front
-};
+    // pass vertex and color data to OpenGL
+    glVertexPointer(3, GL_FLOAT, 0, positions.data());
+    glColorPointer(3, GL_FLOAT, 0, colors.data());
 
-// Define indices for each face of the pyramid
-GLubyte pyramidIndices[] = {
-    // Side faces
-    0, 1, 2,  // Apex, Base-left, Base-right
-    0, 2, 3,  // Apex, Base-right, Base-front
-    0, 3, 1,  // Apex, Base-front, Base-left
+    // draw elements
+    glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_BYTE, indices.data());
 
-    // Base face
-    1, 3, 2   // Base-left, Base-front, Base-right (counterclockwise for back face culling)
-};
-
-void drawSolid(GLfloat vertices[], GLfloat colors[], GLubyte indices[], GLsizei indexCount) {
-  // Set vertex and color pointers
-  glVertexPointer(3, GL_FLOAT, 0, vertices);
-  glColorPointer(3, GL_FLOAT, 0, colors);
-
-  // Draw the cube using index array
-  glDrawElements(GL_TRIANGLES, indexCount, GL_UNSIGNED_BYTE, indices);
-
-  // Disable vertex and color arrays
-  glDisableClientState(GL_VERTEX_ARRAY);
-  glDisableClientState(GL_COLOR_ARRAY);
+    // disable vertex and color arrays
+    glDisableClientState(GL_VERTEX_ARRAY);
+    glDisableClientState(GL_COLOR_ARRAY);
 }
 
-int main()
-{
+
+int main() {
 // Create the window using sf::RenderWindow to support drawing
     sf::RenderWindow window(sf::VideoMode(800, 600), "OpenGL Spinning Cube", sf::Style::Default, sf::ContextSettings(32));
     Camera camera;
