@@ -110,7 +110,7 @@ public:
 		    0, 1, 3,
 
 		    // Base face
-		    1, 3, 2   // Base-left, Base-front, Base-right (counterclockwise for back face culling)
+		    1, 2, 3   // Base-left, Base-front, Base-right (counterclockwise for back face culling)
 		};
 
 		GLsizei indexCount = sizeof(pyramidIndices) / sizeof(GLubyte);
