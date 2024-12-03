@@ -54,10 +54,12 @@ int main() {
     std::vector<std::string> items = { "Cube", "Pyramid"};
     SolidSelector solidSelector(10, 10, 150, 30, items);
     std::string selectedSolid = "";
+    std::string previousSelectecSolid = "";
 
     // Enable depth test
     glEnable(GL_DEPTH_TEST);
-    glDepthFunc(GL_LESS);
+    glDepthFunc(GL_LEQUAL);
+    glClearDepth(1.0f);
 
     // Enable back-face culling
     glEnable(GL_CULL_FACE);
@@ -91,6 +93,7 @@ int main() {
                 float aspect = static_cast<float>(event.size.width) / event.size.height;
                 camera.setFrustum(fov, aspect, near, far);  // Update frustum for the new aspect ratio
             }
+            vertexManager.handleEvent(event, window);
             solidSelector.handleEvent(event, window);
         }
 
@@ -110,12 +113,27 @@ int main() {
         glEnableClientState(GL_VERTEX_ARRAY);
         glEnableClientState(GL_COLOR_ARRAY);
 
+        previousSelectecSolid = selectedSolid;
         selectedSolid = solidSelector.getSelectedText().getString().toAnsiString();
+
+
         if (selectedSolid == "Cube") {
-            drawSolid(cubeVertices, cubeColors, cubeIndices, 36);
+            Cube cube;
+            if (previousSelectecSolid != selectedSolid) {
+                vertexManager.clear();
+                vertexManager.addSolid(cube);
+            }
+            drawSolid(vertexManager.getVertices(), cube.getCubeIndices());
+            // drawSolid(cubeVertices, cubeColors, cubeIndices, 36);
         }
         else if (selectedSolid == "Pyramid") {
-            drawSolid(pyramidVertices, pyramidColors, pyramidIndices, 18);
+            Pyramid pyramid;
+            if (previousSelectecSolid != selectedSolid) {
+                vertexManager.clear();
+                vertexManager.addSolid(pyramid);
+            }
+            drawSolid(vertexManager.getVertices(), pyramid.getPyramidIndices());
+            // drawSolid(pyramidVertices, pyramidColors, pyramidIndices, 18);
         }
 
         // Draw the dropdown menu on top of OpenGL content
