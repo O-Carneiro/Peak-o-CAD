@@ -73,8 +73,6 @@ int main()
 
     // Run the main loop
     bool running = true;
-    float rotation_angle_h = 0;
-    float rotation_angle_v = 0;
 
     while (running) {
         // Handle events
@@ -92,11 +90,12 @@ int main()
                 float aspect = static_cast<float>(event.size.width) / event.size.height;
                 camera.setFrustum(fov, aspect, near, far);  // Update frustum for the new aspect ratio
             }
+            camera.handleEvent(event, window);
             solidSelector.handleEvent(event, window);
         }
 
         // Handle camera input
-        camera.handleInput(rotation_angle_h, rotation_angle_v);
+        camera.handleInput();
 
         // Clear the color and depth buffer
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -113,7 +112,7 @@ int main()
         for(auto* i : meshes)
         {
             glLoadIdentity();
-            camera.setDistance(2.5f);
+            camera.setDistance(camera.zoom_distance_viewport);
             camera.setRotation(rotation_angle_h, rotation_angle_v); 
             i->render();  
         }
@@ -123,7 +122,8 @@ int main()
         for(auto* i : meshes)
         {
             glLoadIdentity();
-            camera.setDistance(2.5f);
+            camera.setDistance(camera.zoom_distance_front);
+            glTranslatef(0.0f, 0.0f, -1.5f);
             i->render();  
         }
 
@@ -132,7 +132,8 @@ int main()
         for(auto* i : meshes)
         {
             glLoadIdentity();
-            camera.setDistance(2.5f);
+            camera.setDistance(camera.zoom_distance_up);
+            glTranslatef(0.0f, 0.0f, -1.5f);
             camera.setRotation(0, 90); 
             i->render();  
         }
@@ -143,7 +144,8 @@ int main()
         for(auto* i : meshes)
         {
             glLoadIdentity();
-            camera.setDistance(2.5f);
+            camera.setDistance(camera.zoom_distance_side);
+            glTranslatef(0.0f, 0.0f, -1.5f);
             camera.setRotation(90, 0); 
             i->render();  
         }
@@ -162,7 +164,8 @@ int main()
     }
 
     delete cube;
-    delete mesh;
+    delete pyr;
+    delete &meshes;
 
     return 0;
 }
