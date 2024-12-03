@@ -143,8 +143,6 @@ int main()
 
     // Run the main loop
     bool running = true;
-    float rotation_angle_h = 0;
-    float rotation_angle_v = 0;
 
     while (running) {
         // Handle events
@@ -162,11 +160,12 @@ int main()
                 float aspect = static_cast<float>(event.size.width) / event.size.height;
                 camera.setFrustum(fov, aspect, near, far);  // Update frustum for the new aspect ratio
             }
+            camera.handleEvent(event, window);
             solidSelector.handleEvent(event, window);
         }
 
         // Handle camera input
-        camera.handleInput(rotation_angle_h, rotation_angle_v);
+        camera.handleInput();
 
         // Clear the color and depth buffer
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -174,8 +173,6 @@ int main()
         // Set model-view matrix
         glMatrixMode(GL_MODELVIEW);
         glLoadIdentity();
-        camera.setDistance(1.5f);
-        camera.setRotation(rotation_angle_h, rotation_angle_v);
 
         // Enable vertex and color arrays
         glEnableClientState(GL_VERTEX_ARRAY);
@@ -186,17 +183,21 @@ int main()
 
         // - Top-right (free camera)
         glViewport(window_width/2, window_height/2, window_width/2, window_height/2);
+        camera.setDistance(camera.zoom_distance_viewport);
+        camera.setRotation(camera.rotation_angle_h, camera.rotation_angle_v);
         drawOption(selectedSolid);
 
         // - Bottom-right (front view)
         glViewport(window_width/2, 0, window_width/2, window_height/2);
         glLoadIdentity();
+        camera.setDistance(camera.zoom_distance_front);
         glTranslatef(0.0f, 0.0f, -1.5f);
         drawOption(selectedSolid);
 
         // - Top-left (up view)
         glViewport(0, window_height/2, window_width/2, window_height/2);
         glLoadIdentity();
+        camera.setDistance(camera.zoom_distance_up);
         glTranslatef(0.0f, 0.0f, -1.5f);
         glRotatef(90, 1.0f, 0.0f, 0.0f);
         drawOption(selectedSolid);
@@ -204,6 +205,7 @@ int main()
         // - Bottom-left (side view)
         glViewport(0, 0, window_width/2, window_height/2);
         glLoadIdentity();
+        camera.setDistance(camera.zoom_distance_side);
         glTranslatef(0.0f, 0.0f, -1.5f);
         glRotatef(90, 0.0f, 1.0f, 0.0f);
         drawOption(selectedSolid);
