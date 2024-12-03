@@ -4,117 +4,47 @@
 #include <cmath>
 #include "camera.h"
 #include "solid_selector.h"
+#include "solids.h"
+#include "mesh.h"
 
 #define MAX_VERTICES 100000
 
-// Cube vertices and color data
-GLfloat cubeVertices[] = {
-    // Front face
-    -0.5f, -0.5f,  0.5f,  // Bottom-left
-     0.5f, -0.5f,  0.5f,  // Bottom-right
-     0.5f,  0.5f,  0.5f,  // Top-right
-    -0.5f,  0.5f,  0.5f,  // Top-left
+// void drawSolid(GLfloat vertices[], GLfloat colors[], GLubyte indices[], GLsizei indexCount) {
+//   // Set vertex and color pointers
+//   glVertexPointer(3, GL_FLOAT, 0, vertices);
+//   glColorPointer(3, GL_FLOAT, 0, colors);
 
-    // Back face
-    -0.5f, -0.5f, -0.5f,  // Bottom-left
-     0.5f, -0.5f, -0.5f,  // Bottom-right
-     0.5f,  0.5f, -0.5f,  // Top-right
-    -0.5f,  0.5f, -0.5f   // Top-left
-};
+//   // Draw the cube using index array
+//   glDrawElements(GL_TRIANGLES, indexCount, GL_UNSIGNED_BYTE, indices);
+// }
 
-GLfloat cubeColors[] = {
-    // Front face (red)
-    0.0f, 1.0f, 1.0f,
-    0.0f, 0.0f, 1.0f,
-    0.0f, 0.0f, 1.0f,
-    0.0f, 0.0f, 1.0f,
-
-    // Back face (green)
-    0.0f, 1.0f, 0.0f,
-    0.0f, 1.0f, 0.0f,
-    0.0f, 1.0f, 0.0f,
-    0.0f, 1.0f, 0.0f
-};
-
-GLubyte cubeIndices[] = {
-    // Front face (counterclockwise)
-    0, 1, 2,
-    2, 3, 0,
-    
-    // Back face (counterclockwise)
-    4, 7, 6,
-    6, 5, 4,
-
-    // Left face (counterclockwise)
-    0, 3, 7,
-    7, 4, 0,
-
-    // Right face (counterclockwise)
-    1, 5, 6,
-    6, 2, 1,
-
-    // Top face (counterclockwise)
-    3, 2, 6,
-    6, 7, 3,
-
-    // Bottom face (counterclockwise)
-    0, 4, 5,
-    5, 1, 0
-};
-
-
-// Pyramid vertices and color data
-GLfloat pyramidVertices[] = {
-    // Apex (top point of the pyramid)
-    0.0f, 0.5f, 0.0f,   // Vertex 0 (Apex)
-
-    // Base vertices
-    -0.5f, -0.5f, -0.5f, // Vertex 1 (Base - left)
-     0.5f, -0.5f, -0.5f, // Vertex 2 (Base - right)
-     0.0f, -0.5f,  0.5f  // Vertex 3 (Base - front)
-};
-
-// Define colors for each vertex (can be customized for each face)
-GLfloat pyramidColors[] = {
-    // Apex color (e.g., red)
-    1.0f, 0.0f, 0.0f,  // Apex
-
-    // Base vertices (e.g., green)
-    0.0f, 1.0f, 0.0f,  // Base - left
-    0.0f, 1.0f, 0.0f,  // Base - right
-    0.0f, 1.0f, 0.0f   // Base - front
-};
-
-// Define indices for each face of the pyramid
-GLubyte pyramidIndices[] = {
-    // Side faces
-    0, 1, 2,  // Apex, Base-left, Base-right
-    0, 2, 3,  // Apex, Base-right, Base-front
-    0, 3, 1,  // Apex, Base-front, Base-left
-
-    // Base face
-    1, 3, 2   // Base-left, Base-front, Base-right (counterclockwise for back face culling)
-};
-
-void drawSolid(GLfloat vertices[], GLfloat colors[], GLubyte indices[], GLsizei indexCount) {
-  // Set vertex and color pointers
-  glVertexPointer(3, GL_FLOAT, 0, vertices);
-  glColorPointer(3, GL_FLOAT, 0, colors);
-
-  // Draw the cube using index array
-  glDrawElements(GL_TRIANGLES, indexCount, GL_UNSIGNED_BYTE, indices);
-}
-
-void drawOption(std::string solid)
-{
-    if(solid == "Cube") drawSolid(cubeVertices, cubeColors, cubeIndices, 36);
-    else if(solid == "Pyramid") drawSolid(pyramidVertices, pyramidColors, pyramidIndices, 18);
-}
+// void drawOption(std::string solid)
+// {
+//     if(solid == "Cube") drawSolid(cubeVertices, cubeColors, cubeIndices, 36);
+//     else if(solid == "Pyramid") drawSolid(pyramidVertices, pyramidColors, pyramidIndices, 18);
+// }
 
 int main()
 {
+    // Default solids
+    Cube* cube = new Cube();
+    Pyramid* pyr = new Pyramid();
+
+    // Example meshes
+    Mesh* mesh = new Mesh(cube);
+    Mesh* mesh2 = new Mesh(cube);
+    Mesh* mesh3 = new Mesh(pyr);
+    GLfloat pos[3] = {1.0f, 0.0f, 0.0f};
+    GLfloat pos1[3] = {-1.0f, 0.0f, 0.0f};
+    GLfloat pos2[3] = {0.0f, 0.0f, -1.0f};
+    mesh->move(pos);
+    mesh2->move(pos1);
+    mesh3->move(pos2);
+    std::vector<Mesh*> meshes;
+    meshes.push_back(mesh); meshes.push_back(mesh2);meshes.push_back(mesh3);
+
     int window_width = 800, window_height = 600;
-// Create the window using sf::RenderWindow to support drawing
+    // Create the window using sf::RenderWindow to support drawing
     sf::RenderWindow window(sf::VideoMode(window_width, window_height), "OpenGL Spinning Cube", sf::Style::Default, sf::ContextSettings(32));
     Camera camera;
     window.setVerticalSyncEnabled(true);
@@ -152,7 +82,7 @@ int main()
                 running = false;
             } else if (event.type == sf::Event::Resized) {
                 // Adjust the viewport when the window is resized
-                //glViewport(0, 0, event.size.width, event.size.height);
+                glViewport(0, 0, event.size.width, event.size.height);
                 window_width = event.size.width;
                 window_height = event.size.height;
                 glMatrixMode(GL_PROJECTION);
@@ -172,43 +102,53 @@ int main()
 
         // Set model-view matrix
         glMatrixMode(GL_MODELVIEW);
-        glLoadIdentity();
 
         // Enable vertex and color arrays
         glEnableClientState(GL_VERTEX_ARRAY);
         glEnableClientState(GL_COLOR_ARRAY);
 
-        selectedSolid = solidSelector.getSelectedText().getString().toAnsiString();
-        // Draw the solid using index array
-
         // - Top-right (free camera)
         glViewport(window_width/2, window_height/2, window_width/2, window_height/2);
-        camera.setDistance(camera.zoom_distance_viewport);
-        camera.setRotation(camera.rotation_angle_h, camera.rotation_angle_v);
-        drawOption(selectedSolid);
+        for(auto* i : meshes)
+        {
+            glLoadIdentity();
+            camera.setDistance(camera.zoom_distance_viewport);
+            camera.setRotation(); 
+            i->render();  
+        }
 
         // - Bottom-right (front view)
         glViewport(window_width/2, 0, window_width/2, window_height/2);
-        glLoadIdentity();
-        camera.setDistance(camera.zoom_distance_front);
-        glTranslatef(0.0f, 0.0f, -1.5f);
-        drawOption(selectedSolid);
+        for(auto* i : meshes)
+        {
+            glLoadIdentity();
+            camera.setDistance(camera.zoom_distance_front);
+            glTranslatef(0.0f, 0.0f, -1.5f);
+            i->render();  
+        }
 
         // - Top-left (up view)
         glViewport(0, window_height/2, window_width/2, window_height/2);
-        glLoadIdentity();
-        camera.setDistance(camera.zoom_distance_up);
-        glTranslatef(0.0f, 0.0f, -1.5f);
-        glRotatef(90, 1.0f, 0.0f, 0.0f);
-        drawOption(selectedSolid);
+        for(auto* i : meshes)
+        {
+            glLoadIdentity();
+            camera.setDistance(camera.zoom_distance_up);
+            glTranslatef(0.0f, 0.0f, -1.5f);
+            camera.setRotation(0, 90); 
+            i->render();  
+        }
+
 
         // - Bottom-left (side view)
         glViewport(0, 0, window_width/2, window_height/2);
-        glLoadIdentity();
-        camera.setDistance(camera.zoom_distance_side);
-        glTranslatef(0.0f, 0.0f, -1.5f);
-        glRotatef(90, 0.0f, 1.0f, 0.0f);
-        drawOption(selectedSolid);
+        for(auto* i : meshes)
+        {
+            glLoadIdentity();
+            camera.setDistance(camera.zoom_distance_side);
+            glTranslatef(0.0f, 0.0f, -1.5f);
+            camera.setRotation(90, 0); 
+            i->render();  
+        }
         
         // Disable vertex and color arrays
         glDisableClientState(GL_VERTEX_ARRAY);
@@ -222,6 +162,13 @@ int main()
         // End the current frame
         window.display();
     }
+
+    for (auto* mesh : meshes) {
+        delete mesh;
+    }
+    delete pyr;
+    delete cube;
+
 
     return 0;
 }

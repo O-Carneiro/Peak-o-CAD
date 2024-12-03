@@ -75,6 +75,11 @@ class Camera
         glRotatef(rotation_angle_h, 0.0f, 1.0f, 0.0f);  // Rotate camera horizontally
     }
 
+    void setRotation() {
+        glRotatef(rotation_angle_v, 1.0f, 0.0f, 0.0f);  // Rotate camera vertically
+        glRotatef(rotation_angle_h, 0.0f, 1.0f, 0.0f);  // Rotate camera horizontally
+    }
+
 
     void setFrustum(float fov, float aspect, float near, float far) {
         float top = near * tan(fov / 2.0f);
