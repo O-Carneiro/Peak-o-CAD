@@ -113,7 +113,7 @@ int main()
         {
             glLoadIdentity();
             camera.setDistance(camera.zoom_distance_viewport);
-            camera.setRotation(rotation_angle_h, rotation_angle_v); 
+            camera.setRotation(); 
             i->render();  
         }
 
@@ -163,9 +163,12 @@ int main()
         window.display();
     }
 
-    delete cube;
+    for (auto* mesh : meshes) {
+        delete mesh;
+    }
     delete pyr;
-    delete &meshes;
+    delete cube;
+
 
     return 0;
 }
