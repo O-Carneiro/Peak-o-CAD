@@ -16,6 +16,9 @@ private:
 
 public:
 
+	GLdouble modelView[16], projection[16];
+	GLint viewport[4];
+
 	Mesh(Primitive* primitive)
 	{
 		for(size_t i = 0; i < primitive->getVertexCount(); i++)
@@ -98,6 +101,10 @@ public:
   		glColorPointer(3, GL_FLOAT, 0, this->colors.data());
 
   		glDrawElements(GL_TRIANGLES, this->indices.size(), GL_UNSIGNED_BYTE, this->indices.data());
+
+  		glGetDoublev(GL_MODELVIEW_MATRIX, modelView);
+	    glGetDoublev(GL_PROJECTION_MATRIX, projection);
+	    glGetIntegerv(GL_VIEWPORT, viewport);
 	}
 
 };

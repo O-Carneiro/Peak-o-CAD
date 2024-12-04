@@ -1,0 +1,3 @@
+/home/luiz3f/Desktop/Coisas_da_Faculdade/6_Periodo/PSI3572_Computacao_Visual/Peak-o-CAD/CMakeFiles/main.dir
+/home/luiz3f/Desktop/Coisas_da_Faculdade/6_Periodo/PSI3572_Computacao_Visual/Peak-o-CAD/CMakeFiles/edit_cache.dir
+/home/luiz3f/Desktop/Coisas_da_Faculdade/6_Periodo/PSI3572_Computacao_Visual/Peak-o-CAD/CMakeFiles/rebuild_cache.dir

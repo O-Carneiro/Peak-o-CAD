@@ -1,0 +1,46 @@
+{
+	"sources" : 
+	[
+		{
+			"file" : "/home/luiz3f/Desktop/Coisas_da_Faculdade/6_Periodo/PSI3572_Computacao_Visual/Peak-o-CAD/_deps/sfml-subbuild/CMakeFiles/sfml-populate"
+		},
+		{
+			"file" : "/home/luiz3f/Desktop/Coisas_da_Faculdade/6_Periodo/PSI3572_Computacao_Visual/Peak-o-CAD/_deps/sfml-subbuild/CMakeFiles/sfml-populate.rule"
+		},
+		{
+			"file" : "/home/luiz3f/Desktop/Coisas_da_Faculdade/6_Periodo/PSI3572_Computacao_Visual/Peak-o-CAD/_deps/sfml-subbuild/CMakeFiles/sfml-populate-complete.rule"
+		},
+		{
+			"file" : "/home/luiz3f/Desktop/Coisas_da_Faculdade/6_Periodo/PSI3572_Computacao_Visual/Peak-o-CAD/_deps/sfml-subbuild/sfml-populate-prefix/src/sfml-populate-stamp/sfml-populate-build.rule"
+		},
+		{
+			"file" : "/home/luiz3f/Desktop/Coisas_da_Faculdade/6_Periodo/PSI3572_Computacao_Visual/Peak-o-CAD/_deps/sfml-subbuild/sfml-populate-prefix/src/sfml-populate-stamp/sfml-populate-configure.rule"
+		},
+		{
+			"file" : "/home/luiz3f/Desktop/Coisas_da_Faculdade/6_Periodo/PSI3572_Computacao_Visual/Peak-o-CAD/_deps/sfml-subbuild/sfml-populate-prefix/src/sfml-populate-stamp/sfml-populate-download.rule"
+		},
+		{
+			"file" : "/home/luiz3f/Desktop/Coisas_da_Faculdade/6_Periodo/PSI3572_Computacao_Visual/Peak-o-CAD/_deps/sfml-subbuild/sfml-populate-prefix/src/sfml-populate-stamp/sfml-populate-install.rule"
+		},
+		{
+			"file" : "/home/luiz3f/Desktop/Coisas_da_Faculdade/6_Periodo/PSI3572_Computacao_Visual/Peak-o-CAD/_deps/sfml-subbuild/sfml-populate-prefix/src/sfml-populate-stamp/sfml-populate-mkdir.rule"
+		},
+		{
+			"file" : "/home/luiz3f/Desktop/Coisas_da_Faculdade/6_Periodo/PSI3572_Computacao_Visual/Peak-o-CAD/_deps/sfml-subbuild/sfml-populate-prefix/src/sfml-populate-stamp/sfml-populate-patch.rule"
+		},
+		{
+			"file" : "/home/luiz3f/Desktop/Coisas_da_Faculdade/6_Periodo/PSI3572_Computacao_Visual/Peak-o-CAD/_deps/sfml-subbuild/sfml-populate-prefix/src/sfml-populate-stamp/sfml-populate-test.rule"
+		},
+		{
+			"file" : "/home/luiz3f/Desktop/Coisas_da_Faculdade/6_Periodo/PSI3572_Computacao_Visual/Peak-o-CAD/_deps/sfml-subbuild/sfml-populate-prefix/src/sfml-populate-stamp/sfml-populate-update.rule"
+		}
+	],
+	"target" : 
+	{
+		"labels" : 
+		[
+			"sfml-populate"
+		],
+		"name" : "sfml-populate"
+	}
+}

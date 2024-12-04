@@ -11,7 +11,7 @@ find_package(SFML COMPONENTS graphics window system REQUIRED)
 find_package(OpenGL REQUIRED)
 
 add_executable(main src/main.cpp)
-target_link_libraries(main PRIVATE sfml-graphics sfml-window sfml-system OpenGL::GL)
+target_link_libraries(main PRIVATE sfml-graphics sfml-window sfml-system OpenGL::GL GLU)
 
 target_compile_features(main PRIVATE cxx_std_17)
 

@@ -6,6 +6,7 @@
 #include "solid_selector.h"
 #include "solids.h"
 #include "mesh.h"
+#include "vertex_dragger.h"
 
 #define MAX_VERTICES 100000
 
@@ -23,6 +24,7 @@
 //     if(solid == "Cube") drawSolid(cubeVertices, cubeColors, cubeIndices, 36);
 //     else if(solid == "Pyramid") drawSolid(pyramidVertices, pyramidColors, pyramidIndices, 18);
 // }
+
 
 int main()
 {
@@ -42,6 +44,7 @@ int main()
     mesh3->move(pos2);
     std::vector<Mesh*> meshes;
     meshes.push_back(mesh); meshes.push_back(mesh2);meshes.push_back(mesh3);
+    VertexDragger vd;
 
     int window_width = 800, window_height = 600;
     // Create the window using sf::RenderWindow to support drawing
@@ -75,6 +78,9 @@ int main()
     bool running = true;
 
     while (running) {
+
+        if(!vd.isSelected) vd.reset();
+
         // Handle events
         sf::Event event;
         while (window.pollEvent(event)) {
@@ -92,6 +98,7 @@ int main()
             }
             camera.handleEvent(event, window);
             solidSelector.handleEvent(event, window);
+            vd.handleEvent(event, window);
         }
 
         // Handle camera input
@@ -118,6 +125,8 @@ int main()
             camera.setDistance(camera.zoom_distance_viewport);
             camera.setRotation();
             i->render();
+            sf::Vector2i mousePos(sf::Mouse::getPosition(window));
+            vd.selectVertex(mousePos, window, &*i);
         }
 
         // - Bottom-right (front view)
@@ -130,7 +139,9 @@ int main()
             glLoadIdentity();
             camera.setDistance(camera.zoom_distance_front);
             glTranslatef(0.0f, 0.0f, -1.5f);
-            i->render();  
+            i->render();
+            sf::Vector2i mousePos(sf::Mouse::getPosition(window));
+            vd.selectVertex(mousePos, window, &*i);  
         }
 
         // - Top-left (up view)
@@ -144,7 +155,9 @@ int main()
             camera.setDistance(camera.zoom_distance_up);
             glTranslatef(0.0f, 0.0f, -1.5f);
             camera.setRotation(0, 90); 
-            i->render();  
+            i->render();
+            sf::Vector2i mousePos(sf::Mouse::getPosition(window));
+            vd.selectVertex(mousePos, window, &*i);  
         }
 
         // - Bottom-left (side view)
@@ -158,7 +171,9 @@ int main()
             camera.setDistance(camera.zoom_distance_side);
             glTranslatef(0.0f, 0.0f, -1.5f);
             camera.setRotation(90, 0); 
-            i->render();  
+            i->render();
+            sf::Vector2i mousePos(sf::Mouse::getPosition(window));
+            vd.selectVertex(mousePos, window, &*i);  
         }
 
         
