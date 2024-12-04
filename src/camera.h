@@ -3,7 +3,7 @@
 
 #define VIEWPORT_MAX_ZOOM 1.5
 #define VIEWPORT_MIN_ZOOM 5.0
-#define SIDEVIEW_MAX_ZOOM 0.5
+#define SIDEVIEW_MAX_ZOOM 2.0
 #define SIDEVIEW_MIN_ZOOM 3.0
 
 
@@ -13,9 +13,9 @@ class Camera
     float rotation_angle_h = 0;
     float rotation_angle_v = 0;
     double zoom_distance_viewport = 2;
-    double zoom_distance_front = 0.5;
-    double zoom_distance_up = 0.5;
-    double zoom_distance_side = 0.5;
+    double zoom_distance_front = SIDEVIEW_MAX_ZOOM;
+    double zoom_distance_up = SIDEVIEW_MAX_ZOOM;
+    double zoom_distance_side = SIDEVIEW_MAX_ZOOM;
 
 
     void handleInput() {

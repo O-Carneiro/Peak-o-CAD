@@ -58,7 +58,7 @@ int main()
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LESS);
 
-    // Enable back-face culling
+    // Enable back face culling
     glEnable(GL_CULL_FACE);
     glCullFace(GL_BACK);
 
@@ -109,18 +109,24 @@ int main()
 
         // - Top-right (free camera)
         glViewport(window_width/2, window_height/2, window_width/2, window_height/2);
-        for(auto* i : meshes)
-        {
+        glMatrixMode(GL_PROJECTION);
+        glLoadIdentity();
+        camera.setFrustum(fov, aspect, near, far); // Set perspective projection
+        glMatrixMode(GL_MODELVIEW);
+        for (auto* i : meshes) {
             glLoadIdentity();
             camera.setDistance(camera.zoom_distance_viewport);
-            camera.setRotation(); 
-            i->render();  
+            camera.setRotation();
+            i->render();
         }
 
         // - Bottom-right (front view)
         glViewport(window_width/2, 0, window_width/2, window_height/2);
-        for(auto* i : meshes)
-        {
+        glMatrixMode(GL_PROJECTION);
+        glLoadIdentity();
+        glOrtho(-camera.zoom_distance_front, camera.zoom_distance_front, -camera.zoom_distance_front, camera.zoom_distance_front, near, far); // Adjust bounds for zoom
+        glMatrixMode(GL_MODELVIEW);
+        for (auto* i : meshes) {
             glLoadIdentity();
             camera.setDistance(camera.zoom_distance_front);
             glTranslatef(0.0f, 0.0f, -1.5f);
@@ -129,8 +135,11 @@ int main()
 
         // - Top-left (up view)
         glViewport(0, window_height/2, window_width/2, window_height/2);
-        for(auto* i : meshes)
-        {
+        glMatrixMode(GL_PROJECTION);
+        glLoadIdentity();
+        glOrtho(-camera.zoom_distance_up, camera.zoom_distance_up, -camera.zoom_distance_up, camera.zoom_distance_up, near, far); // Adjust bounds for zoom
+        glMatrixMode(GL_MODELVIEW);
+        for (auto* i : meshes) {
             glLoadIdentity();
             camera.setDistance(camera.zoom_distance_up);
             glTranslatef(0.0f, 0.0f, -1.5f);
@@ -138,17 +147,20 @@ int main()
             i->render();  
         }
 
-
         // - Bottom-left (side view)
         glViewport(0, 0, window_width/2, window_height/2);
-        for(auto* i : meshes)
-        {
+        glMatrixMode(GL_PROJECTION);
+        glLoadIdentity();
+        glOrtho(-camera.zoom_distance_side, camera.zoom_distance_side, -camera.zoom_distance_side, camera.zoom_distance_side, near, far); // Set orthogonal projection
+        glMatrixMode(GL_MODELVIEW);
+        for (auto* i : meshes) {
             glLoadIdentity();
             camera.setDistance(camera.zoom_distance_side);
             glTranslatef(0.0f, 0.0f, -1.5f);
             camera.setRotation(90, 0); 
             i->render();  
         }
+
         
         // Disable vertex and color arrays
         glDisableClientState(GL_VERTEX_ARRAY);
